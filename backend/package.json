@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@vot.js/core": "^2.4.12",
+    "cors": "^2.8.5",
+    "express": "^5.2.1"
+  },
+  "scripts": {
+    "dev": "node index.js"
+  }
+}
