@@ -250,7 +250,27 @@ app.post("/translate", (req, res) => {
         translation.raw?.videoData?.url;
 
       if (!videoSource) {
-        throw new Error("VOT did not return a downloadable video URL");
+        console.log("⚠️ VOT did not return a downloadable video URL — skipping video merge");
+
+        tasks.set(taskId, {
+          status: "done",
+          progress: 100,
+          result: {
+            translationId: translation.translationId,
+            audioUrl: translation.url,
+            subtitles,
+            finalVideo: null,
+            videoSourceMissing: true,
+            ffmpegNotInstalled: false,
+            raw: {
+              translation,
+              subtitlesResponse: subtitleData?.subs ?? null,
+              track: subtitleData?.track ?? null,
+            },
+          },
+        });
+
+        return;
       }
 
       if (subtitles) {

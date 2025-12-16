@@ -6,16 +6,25 @@ interface Props {
 }
 
 export function TaskItem({task, subtitleFormat}: Props) {
-  const hasSubtitles = !!task.result?.subtitles;
+  const result = task.result;
 
-  const subtitles =
-    hasSubtitles
-      ? subtitleFormat === "srt"
-        ? task.result!.subtitles.srt
-        : subtitleFormat === "vtt"
-          ? task.result!.subtitles.vtt
-          : JSON.stringify(task.result!.subtitles.json, null, 2)
-      : null;
+  const hasSubtitles = !!result?.subtitles;
+
+  const subtitles = (() => {
+    const subs = result?.subtitles;
+    if (!subs) return null;
+
+    switch (subtitleFormat) {
+      case "srt":
+        return subs.srt;
+      case "vtt":
+        return subs.vtt;
+      case "json":
+        return JSON.stringify(subs.json, null, 2);
+      default:
+        return null;
+    }
+  })();
 
   const downloadSubtitles = () => {
     if (!subtitles) return;
@@ -44,39 +53,49 @@ export function TaskItem({task, subtitleFormat}: Props) {
           background: "#eee",
           borderRadius: 5,
           overflow: "hidden",
-          marginBottom: 10
+          marginBottom: 10,
         }}
       >
         <div
           style={{
             width: `${task.progress}%`,
             height: "100%",
-            background: "#4caf50"
+            background: "#4caf50",
           }}
         />
       </div>
 
       {task.error && <p style={{color: "red"}}>{task.error}</p>}
 
-      {task.result && (
+      {result && (
         <>
-          <pre style={{background: "#eee", padding: 20, whiteSpace: 'pre-wrap'}}>
-            {JSON.stringify(task.result, null, 2)}
-          </pre>
+          {/* FFmpeg предупреждение */}
+          {result.ffmpegNotInstalled && (
+            <p style={{color: "orange"}}>
+              ⚠️ FFmpeg не установлен — итоговое видео недоступно
+            </p>
+          )}
+
+          {/* Нет videoSource */}
+          {result.videoSourceMissing && (
+            <p style={{color: "orange"}}>
+              ⚠️ Воркер не вернул videoUrl — итоговое видео недоступно
+            </p>
+          )}
 
           <h4>Аудио</h4>
-          <audio controls src={task.result.audioUrl}/>
+          <audio controls src={result.audioUrl}/>
 
           <h4>Итоговое видео</h4>
-          {task.result.finalVideo ? (
+          {result.finalVideo ? (
             <>
               <video
                 controls
                 width={600}
-                src={`http://localhost:3001${task.result.finalVideo}`}
+                src={`http://localhost:3001${result.finalVideo}`}
               />
               <a
-                href={`http://localhost:3001${task.result.finalVideo}`}
+                href={`http://localhost:3001${result.finalVideo}`}
                 download
                 style={{display: "block", marginTop: 10}}
               >
@@ -85,7 +104,7 @@ export function TaskItem({task, subtitleFormat}: Props) {
             </>
           ) : (
             <p style={{color: "#777"}}>
-              Итоговое видео недоступно (нет субтитров)
+              Итоговое видео недоступно
             </p>
           )}
 
@@ -100,7 +119,7 @@ export function TaskItem({task, subtitleFormat}: Props) {
                   background: "#eee",
                   padding: 20,
                   whiteSpace: "pre-wrap",
-                  marginTop: 10
+                  marginTop: 10,
                 }}
               >
                 {subtitles}

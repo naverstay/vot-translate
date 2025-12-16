@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { languages } from "./languages";
-import { TaskItem } from "./TaskItem";
-import type { Task } from "./types/Task";
+import {useEffect, useState} from "react";
+import {languages} from "./languages";
+import type {Task} from "./types/Task";
+import {TaskList} from "./TaskList.tsx";
 
 export default function App() {
   const [url, setUrl] = useState("https://youtu.be/EemY2GVMiqI?si=Mkec4-3lnX3_GuoN");
@@ -18,8 +18,8 @@ export default function App() {
 
     const res = await fetch("http://localhost:3001/translate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, requestLang, responseLang })
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({url, requestLang, responseLang})
     });
 
     const data = await res.json();
@@ -54,7 +54,7 @@ export default function App() {
         active.map(async (t) => {
           const res = await fetch(`http://localhost:3001/status/${t.id}`);
           const data = await res.json();
-          return { id: t.id, data };
+          return {id: t.id, data};
         })
       );
 
@@ -78,33 +78,33 @@ export default function App() {
   }, [tasks]);
 
   return (
-    <div style={{ padding: 40 }}>
+    <div style={{padding: 40}}>
       <h1>Перевод видео через vot.js</h1>
 
-      <div style={{ marginBottom: 20 }}>
+      <div style={{marginBottom: 20}}>
         <input
           type="text"
           placeholder="URL видео"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          style={{ width: 400, padding: 10 }}
+          style={{width: 400, padding: 10}}
         />
       </div>
 
       {url && (
-        <div style={{ marginBottom: 20 }}>
+        <div style={{marginBottom: 20}}>
           <h3>Предпросмотр</h3>
-          <video src={url} controls width={400} />
+          <video src={url} controls width={400}/>
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 20, marginBottom: 20 }}>
+      <div style={{display: "flex", gap: 20, marginBottom: 20}}>
         <div>
           <label>Язык оригинала</label>
           <select
             value={requestLang}
             onChange={(e) => setRequestLang(e.target.value)}
-            style={{ display: "block", padding: 8 }}
+            style={{display: "block", padding: 8}}
           >
             {languages.map((l) => (
               <option key={l.code} value={l.code}>
@@ -119,7 +119,7 @@ export default function App() {
           <select
             value={responseLang}
             onChange={(e) => setResponseLang(e.target.value)}
-            style={{ display: "block", padding: 8 }}
+            style={{display: "block", padding: 8}}
           >
             {languages.map((l) => (
               <option key={l.code} value={l.code}>
@@ -136,7 +136,7 @@ export default function App() {
             onChange={(e) =>
               setSubtitleFormat(e.target.value as "srt" | "vtt" | "json")
             }
-            style={{ display: "block", padding: 8 }}
+            style={{display: "block", padding: 8}}
           >
             <option value="srt">SRT</option>
             <option value="vtt">VTT</option>
@@ -147,11 +147,9 @@ export default function App() {
 
       <button onClick={createTask}>Добавить в очередь</button>
 
-      <h2 style={{ marginTop: 40 }}>Очередь задач</h2>
+      <h2 style={{marginTop: 40}}>Очередь задач</h2>
 
-      {tasks.map((task) => (
-        <TaskItem key={task.id} task={task} subtitleFormat={subtitleFormat} />
-      ))}
+      {<TaskList tasks={tasks} subtitleFormat={subtitleFormat}/>}
     </div>
   );
 }

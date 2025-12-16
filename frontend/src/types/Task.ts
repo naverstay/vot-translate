@@ -1,19 +1,13 @@
-import type {TranslateResult} from "./TranslateResult";
-
-export type TaskStatus = "queued" | "processing" | "done" | "error";
+import type { TranslateResult } from "./TranslateResult";
 
 export interface Task {
   id: string;
 
-  // Текущий статус задачи
-  status: TaskStatus;
+  status: "queued" | "processing" | "done" | "error";
 
-  // Прогресс от 0 до 100
   progress: number;
 
-  // Результат, если задача завершена
   result: TranslateResult | null;
 
-  // Ошибка, если задача завершилась неудачно
-  error?: string;
+  error?: string | null;
 }
