@@ -2,9 +2,10 @@
   "dependencies": {
     "@vot.js/core": "^2.4.12",
     "cors": "^2.8.5",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11"
   },
   "scripts": {
-    "dev": "node index.js"
+    "backend": "nodemon index.js"
   }
 }
